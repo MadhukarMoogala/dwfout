@@ -6,6 +6,20 @@ For more information refer [3DDWF](https://knowledge.autodesk.com/support/autoca
 
 # Build
 
+```bash
+git clone https://github.com/MadhukarMoogala/dwfout.git
+cd dwfout
+msbuild /t:Build /p:Configuration=Debug;Platform=x64
+
+```
+
+### NOTE
+
+Edit `dwfout.vcxproj`
+find and replace `D:\work\ArxSdks\ObjectARX2021`  with your `ObjectARX2021 SDK` path.
+
+
+
 ### Expected Compiled Output
 
 ```bash
@@ -56,7 +70,7 @@ Time Elapsed 00:00:01.30
 
 # DEMO
 
-
+![WorkingGif](https://github.com/MadhukarMoogala/dwfout/blob/master/DWFXCLI.gif)
 
 ## License
 
