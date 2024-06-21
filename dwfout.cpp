@@ -61,7 +61,7 @@ void initApp()
                             _T("ASDK_MKENTS"),
                             _T("DWFOUTCLI"),
                             ACRX_CMD_MODAL,
-        dwgoutcli);
+                            dwgoutcli);
 	
 }
 
