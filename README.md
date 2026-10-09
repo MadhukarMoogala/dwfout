@@ -1,80 +1,80 @@
-# DWFXOUTCLI
+# DWFXOUT
 
-An AutoCAD command to get DWFX output from a DWG, this command can be scriptable.
+An AutoCAD command, `DWFOUTCLI`, that exports a DWG to DWFX. It is scriptable, so it works in `accoreconsole.exe` and Design Automation. Supports AutoCAD 2026 and 2027.
 
-For more information refer [3DDWF](https://knowledge.autodesk.com/support/autocad/learn-explore/caas/CloudHelp/cloudhelp/2020/ENU/AutoCAD-Core/files/GUID-8D5FEF23-3399-4948-98FE-B3DDCF50E269-htm.html)
+For background see [3D DWF](https://knowledge.autodesk.com/support/autocad/learn-explore/caas/CloudHelp/cloudhelp/2020/ENU/AutoCAD-Core/files/GUID-8D5FEF23-3399-4948-98FE-B3DDCF50E269-htm.html).
 
-# Build
+![Demo](DWFXCLI.gif)
 
-```bash
+## Prerequisites
+
+- Visual Studio 2026 with the **Desktop development with C++** workload, plus the **MSVC v143** toolset, **ATL** and **MFC** components.
+- ObjectARX SDK for each AutoCAD version you target (2026, 2027).
+
+## Build
+
+Open a **Developer Command Prompt for VS 2026**:
+
+```bat
 git clone https://github.com/MadhukarMoogala/dwfout.git
 cd dwfout
-msbuild /t:Build /p:Configuration=Debug;Platform=x64
-
+msbuild dwfout.vcxproj /p:Configuration=Release /p:Platform=x64 /p:ArxVersion=2027 /p:ArxSdkDir=C:\path\to\ARX2027
 ```
 
-### NOTE
+| Property | Meaning | Default |
+|---|---|---|
+| `ArxVersion` | SDK year: `2026` or `2027` | `2026` |
+| `ArxSdkDir` | ObjectARX SDK folder (contains `inc\` and `lib-x64\`) | `<ArxSdkRoot>\ARX<ArxVersion>` |
+| `ArxSdkRoot` | Folder holding `ARX2026`, `ARX2027`, ... | `D:\SDKS` |
+| `ArxModuleType` | `arx` for AutoCAD, `crx` for accoreconsole / Design Automation | `arx` |
+| `ArxPlatformToolset` | MSVC toolset | `v143` |
+| `ArxCppStandard` | C++ standard | `stdcpp17` |
 
-Edit `dwfout.vcxproj`
-find and replace `D:\work\ArxSdks\ObjectARX2021`  with your `ObjectARX2021 SDK` path.
+Output: `bins\<ArxVersion>\dwfout.arx` or `dwfout.crx`. Settings live in `ArxSdk.props` and `Crx.props`.
 
+Build both module types for one version:
 
-
-### Expected Compiled Output
-
-```bash
-Microsoft (R) Build Engine version 16.8.3+39993bd9d for .NET Framework
-Copyright (C) Microsoft Corporation. All rights reserved.
-
-Building the projects in this solution one at a time. To enable parallel build, please add the "-m" switch.
-Build started 20-01-2021 11:00:27.
-Project "D:\Work\Arxprojects\2021\dwfoutArx\dwfout.sln" on node 1 (build target(s)).
-ValidateSolutionConfiguration:
-  Building solution configuration "Debug|x64".
-Project "D:\Work\Arxprojects\2021\dwfoutArx\dwfout.sln" (1) is building "D:\Work\Arxprojects\2021\dwfoutArx\dwfout.vcxproj" (2) on node 1 (default targets).
-InitializeBuildStatus:
-  Touching "x64\Debug\dwfout.tlog\unsuccessfulbuild".
-ClCompile:
-  All outputs are up-to-date.
-Link:
-  C:\vs2019\VC\Tools\MSVC\14.28.29333\bin\HostX86\x64\link.exe /ERRORREPORT:QUEUE /OUT:"D:\Work\Arxprojects\2021\dwfoutArx\x64\Debug\dwfout.arx" /INCREMENTAL:NO /NOLOGO /LIBPATH:"D:\work\ArxSdks\Obj
-  ectARX2021\lib-x64" /LIBPATH:"D:\Work\ObjectARX2021\lib-x64" accore.lib acad.lib acui24.lib adui24.lib ac1st24.lib acdb24.lib acge24.lib acgiapi.lib acISMobj24.lib rxapi.lib kernel32.lib user32.li
-  b gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /DEF:"D:\work\ArxSdks\ObjectARX2021\inc\AcRxDefault.def" /MANIFEST /MANIFESTU
-  AC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\Work\Arxprojects\2021\dwfoutArx\x64\Debug\dwfout.pdb" /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF /TLBID:1 /DYNAMICBASE /NXCOMPAT /
-  IMPLIB:"x64\Debug\dwfout.lib" /MACHINE:X64 /CLRTHREADATTRIBUTE:STA /CLRIMAGETYPE:IJW /CLRUNMANAGEDCODECHECK /DLL x64\Debug\dwfout.obj
-     Creating library x64\Debug\dwfout.lib and object x64\Debug\dwfout.exp
-rxapi.lib(libinit.obj) : warning LNK4099: PDB '' was not found with 'rxapi.lib(libinit.obj)' or at ''; linking object as if no debug info [D:\Work\Arxprojects\2021\dwfoutArx\dwfout.vcxproj]
-  dwfout.vcxproj -> D:\Work\Arxprojects\2021\dwfoutArx\x64\Debug\dwfout.arx
-FinalizeBuildStatus:
-  Deleting file "x64\Debug\dwfout.tlog\unsuccessfulbuild".
-  Touching "x64\Debug\dwfout.tlog\dwfout.lastbuildstate".
-Done Building Project "D:\Work\Arxprojects\2021\dwfoutArx\dwfout.vcxproj" (default targets).
-
-Done Building Project "D:\Work\Arxprojects\2021\dwfoutArx\dwfout.sln" (build target(s)).
-
-
-Build succeeded.
-
-"D:\Work\Arxprojects\2021\dwfoutArx\dwfout.sln" (build target) (1) ->
-"D:\Work\Arxprojects\2021\dwfoutArx\dwfout.vcxproj" (default target) (2) ->
-(Link target) ->
-  rxapi.lib(libinit.obj) : warning LNK4099: PDB '' was not found with 'rxapi.lib(libinit.obj)' or at ''; linking object as if no debug info [D:\Work\Arxprojects\2021\dwfoutArx\dwfout.vcxproj]
-
-    1 Warning(s)
-    0 Error(s)
-
-Time Elapsed 00:00:01.30
+```bat
+msbuild dwfout.vcxproj /p:Configuration=Release /p:Platform=x64 /p:ArxVersion=2026 /p:ArxSdkDir=C:\path\to\ARX2026 /p:ArxModuleType=arx
+msbuild dwfout.vcxproj /p:Configuration=Release /p:Platform=x64 /p:ArxVersion=2026 /p:ArxSdkDir=C:\path\to\ARX2026 /p:ArxModuleType=crx
 ```
 
+An ARX built against one SDK year only loads in that AutoCAD year.
 
+## Use
 
-# DEMO
+In AutoCAD (`.arx`) or accoreconsole (`.crx` only):
 
-![WorkingGif](https://github.com/MadhukarMoogala/dwfout/blob/master/DWFXCLI.gif)
+```lisp
+(arxload "C:/path/to/bins/2027/dwfout.crx")
+DWFOUTCLI
+```
+
+It prompts for the output file name, then `Objects to publish` (`_ALL`) and `Publish With Materials` (`_YES`). Script example:
+
+```
+(arxload "C:/path/to/bins/2027/dwfout.crx")
+DWFOUTCLI
+C:/temp/out.dwfx
+_ALL
+_YES
+_.QUIT Y
+```
+
+## Test
+
+Builds the CRX for each version, runs `DWFOUTCLI` on `solids.dwg` in `accoreconsole.exe` and checks that a valid DWFX is produced:
+
+```powershell
+.\tests\Test-DwfOut.ps1 -SdkRoot C:\SDKS -AcadRoot "C:\Program Files\Autodesk"
+.\tests\Test-DwfOut.ps1 -Versions 2027 -OutputDir .\testout   # keep the DWFX files
+```
+
+Expects `<SdkRoot>\ARX<year>` and `<AcadRoot>\AutoCAD <year>\accoreconsole.exe`.
 
 ## License
 
-This sample is licensed under the terms of the [MIT License](http://opensource.org/licenses/MIT). Please see the [LICENSE](https://github.com/MadhukarMoogala/dwfout/blob/master/LICENSE) file for full details.
+[MIT](LICENSE)
 
 ## Written by
 
