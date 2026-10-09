@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ArxSdk.props - selects the ObjectARX SDK used to build dwfout.arx.
+
+  Import this BEFORE Microsoft.Cpp.props. Inputs (MSBuild /p: or environment variable):
+
+    ArxVersion          SDK year, e.g. 2026 or 2027.              Default: 2026
+    ArxSdkDir           Full path of one SDK (contains inc\ and lib-x64\).
+                        Highest priority.
+    ArxSdkRoot          Folder holding one ARX<year> folder per version.
+                        Default: D:\SDKS
+    ArxPlatformToolset  MSVC toolset.                              Default: v143
+    ArxCppStandard      C++ language standard (stdcpp17, stdcpp20...). SDK 2027
+                        headers need at least C++17.                 Default: stdcpp17
+    ArxModuleType       arx (full AutoCAD) or crx (also loads in accoreconsole /
+                        Design Automation; links accore.lib only).   Default: arx
+                        Uses the repo's Crx.props for every SDK version (the
+                        2026 SDK has no crx.props of its own).
+
+  Examples:
+    msbuild dwfout.vcxproj /p:Configuration=Release /p:Platform=x64 /p:ArxVersion=2027
+    msbuild dwfout.vcxproj /p:ArxVersion=2027 /p:ArxSdkDir=C:\ObjectARX_2027
+    msbuild dwfout.vcxproj /p:ArxVersion=2026 /p:ArxSdkRoot=E:\ArxSdks
+
+  Output dirs are set in dwfout.vcxproj: bins\$(ArxVersion)\dwfout.arx
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ArxVersion Condition="'$(ArxVersion)' == ''">2026</ArxVersion>
+    <ArxSdkRoot Condition="'$(ArxSdkRoot)' == ''">D:\SDKS</ArxSdkRoot>
+    <ArxSdkDir Condition="'$(ArxSdkDir)' == ''">$(ArxSdkRoot)\ARX$(ArxVersion)</ArxSdkDir>
+    <ArxSdkDir>$([MSBuild]::EnsureTrailingSlash('$(ArxSdkDir)'))</ArxSdkDir>
+    <ArxPlatformToolset Condition="'$(ArxPlatformToolset)' == ''">v143</ArxPlatformToolset>
+    <ArxCppStandard Condition="'$(ArxCppStandard)' == ''">stdcpp17</ArxCppStandard>
+    <ArxModuleType Condition="'$(ArxModuleType)' == ''">arx</ArxModuleType>
+  </PropertyGroup>
+
+  <Target Name="ArxModuleTypeValidate" BeforeTargets="PrepareForBuild;ClCompile">
+    <Error Condition="'$(ArxModuleType)' != 'arx' AND '$(ArxModuleType)' != 'crx'"
+           Text="ArxModuleType must be 'arx' or 'crx', got '$(ArxModuleType)'." />
+  </Target>
+
+  <!-- Fail early with an actionable message instead of an obscure missing-import error. -->
+  <Target Name="ArxSdkValidate" BeforeTargets="PrepareForBuild;ClCompile">
+    <Error Condition="!Exists('$(ArxSdkDir)inc\arx.props')"
+           Text="ObjectARX $(ArxVersion) SDK not found at '$(ArxSdkDir)'. Pass /p:ArxSdkDir=&lt;sdk path&gt; or /p:ArxSdkRoot=&lt;folder containing ARX$(ArxVersion)&gt;." />
+  </Target>
+</Project>

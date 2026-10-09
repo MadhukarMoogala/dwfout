@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Crx.props - settings for building a .crx (loads in AutoCAD and accoreconsole / Design Automation).
+
+  Same content as the 2027 SDK's inc\crx.props, kept in the repo because the 2026 SDK has none.
+  Import after rxsdk_<Config>cfg.props, with ArxSdkDir already defined (see ArxSdk.props).
+  Only links accore.lib: code must not depend on acad.lib or UI libraries.
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(ArxSdkDir)inc\dbx.props" />
+  </ImportGroup>
+  <PropertyGroup>
+    <TargetExt>.crx</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalDependencies>accore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+</Project>
